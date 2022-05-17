@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Waipukurau Corner Pizzeria</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="css/mobile.css" type="text/css">
+    <script src="js/mobile.js" type="text/javascript"></script>
+</head>
+
+<!--assumptions: data within the table is currently hardcoded, but will eventually be generated
+currently, the links in the action column of the table aren't functional either-->
+
+<body>
+    <div id="pageHeader">
+        <h1>Current Bookings</h1>
+    </div>
+    <div>
+        <ul id="navigation">
+            <li>
+                <a href="makeBooking.html">[Make a booking]</a>
+            </li>
+            <li>
+                <a href="index.html">[Return to the main page]</a>
+            </li>
+        </ul>
+    </div>
+    <table id="bookingTable">
+        <input type="text" name="search" id="search" placeholder="Search...">
+        <thead>
+            <tr>
+                <th col-index = 1 rowspan="2">Booking (date & time, people)
+                    <select class="table-filter">
+                        <option value="all"></option>
+                    </select>
+                </th>
+                <th col-index = 2 rowspan="2">Customer (Telephone)
+                    <select class="table-filter">
+                        <option value="all"></option>
+                    </select>
+                </th>
+
+                <th rowspan="2">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Admin, Admin (T:592-232-0521)</td>
+                <td>2021-12-18 17:29:36 (2)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Admin, Admin (T:151-149-9447)</td>
+                <td>2021-05-20 14:13:23 (2)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>2021-06-10 03:52:37 (4)</td>
+                <td>Collier, Desiree (T:541-687-0825)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>2021-03-01 04:11:27 (4)</td>
+                <td>Collier, Desiree (T:593-781-9360)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Baldwin, Forrest (T:393-916-0672)</td>
+                <td>2021-02-11 08:39:29 (1)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Baldwin, Forrest (T:673-132-5499)</td>
+                <td>2021-01-29 16:57:48 (3)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Baldwin, Forrest (T:382-125-5641)</td>
+                <td>2021-01-16 17:42:15 (5)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Gallagher, Montana (T:473-595-2768)</td>
+                <td>2021-11-04 08:16:06 (5)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Gallagher, Montana (T:507-644-2363)</td>
+                <td>2021-03-24 05:13:46 (3)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Lara, Harlan (T:775-120-6785)</td>
+                <td>2021-05-18 06:13:06 (4)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>King, Benjamin (T:114-541-0005)</td>
+                <td>2021-11-28 12:20:58 (1)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+            <tr>
+                <td>King, Benjamin (T:959-512-2639)</td>
+                <td>2021-03-24 17:06:28 (3)</td>
+                <td>
+                    <a href="view.html">[view]</a>
+                    <a href="edit.html">[edit]</a>
+                    <a href="delete.html">[delete]</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+<footer>
+
+</footer>
+
+</html>
