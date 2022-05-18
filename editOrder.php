@@ -67,37 +67,60 @@
             $extras = '';
         }
 
-        //dropdowns
-        if (isset($_POST['pizzaList']) and !empty($_POST['pizzaList']) ) {
-            $pizza = cleanInput($_POST['pizzaList']);
-        } else {
-            $error++; //bump the error flag
-            $msg .= 'Invalid pizza  '; //append eror message
-            $pizza = '';
+        // pizza dropdowns
+        if (isset($_POST['pizza']) and !empty($_POST['pizza'])) {
+
+            $pizzas = $_POST['pizza'];
+
+            foreach($pizzas as $pizza) {
+                $fn = cleanInput($pizza); 
+                $pizza = (strlen($fn)>15)?substr($fn,1,15):$fn; //check length and clip if too big
+
+                //we would also do context checking here for contents, etc     
+                // if (!strpos($pizza, 'Margheritta' or 'Chorizo' or 'Pepperoni' or 'Carne'
+                // or 'Salsiccia' or 'Calabrese' or 'Patate' or 'Salmon' or 'Pancetta' or 'Capricciosa')) {
+                //     $error++; //bump the error flag
+                //     $msg .=  ': Invalid pizza  '; //append eror message
+                // } 
+            }
         }
 
-        //pizza quantity
-        if (isset($_POST['pizzaQuantity']) and !empty($_POST['pizzaQuantity']) and is_integer(intval($_POST['pizzaQuantity']))) {
-            $pizzaQuantity = cleanInput($_POST['pizzaQuantity']);
-            //make it so you can only enter between 1 and 10
-        } else {
-            $error++; //bump the error flag
-            $msg .= 'Invalid pizza quantity '; //append eror message
-            $quantity = 0;
+        //pizza quantity dropdowns
+        if (isset($_POST['quantity']) and !empty($_POST['quantity'])) { 
+            $quantities = $_POST['quantity'];
+
+            foreach($quantities as $quantity) {
+                if ($quantity < 1 || $quantity > 12) {
+                    $error++; //bump the error flag
+                    $msg .= ' Invalid pizza quantity  '; //append eror message
+                }
+            }       
         }
 
-        //save the item data if the error flag is still clear and item id is > 0
-        if ($error == 0 and $id > 0) {
-            $query = "UPDATE orderlines, fooditems
-                      SET orderlines.itemID = fooditems.itemID,
-                          orderlines.pizzaQuantity = ?
-                      WHERE orderlines.orderID = ? and fooditems.pizza = ?";
+        //save the item data if the error flag is still clear 
+        if ($error == 0) {
+            // First delete the existing orderlines corresponding with the order
+            $query = "DELETE FROM orderlines WHERE orderID=?";
             $stmt = mysqli_prepare($DBC, $query); //prepare the query
-            mysqli_stmt_bind_param($stmt, 'iis', $pizzaQuantity, $id, $pizza);
+            mysqli_stmt_bind_param($stmt,'i', $id); 
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
+
+            // Now insert the new/changed orderlines
+            for($i = 0; $i < count($pizzas); $i++) {
+                $pizza = $pizzas[$i];
+                $quantity = $quantities[$i];
+    
+                $query = "INSERT INTO orderlines (orderID, itemId, pizzaQuantity, extras) 
+                          SELECT ?, itemID, ?, ?
+                          FROM fooditems
+                          WHERE pizza = ?";
+                $stmt = mysqli_prepare($DBC, $query); //prepare the query
+                mysqli_stmt_bind_param($stmt,'iiss', $id, $quantity, $extras, $pizza); 
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
+            }    
             echo "<h2>Order details updated.</h2>";
-            //        header('Location: http://localhost/bit608/listitems.php', true, 303);      
         } else {
             echo "<h2>$msg</h2>" . PHP_EOL;
         }
@@ -122,7 +145,7 @@
         <h1>Pizza Orders Details Update</h1>
         <h2><a href='currentOrders.php'>[Return to the orders listing]</a><a href='index.php'>[Return to the main page]</a></h2>
 
-        <form method="POST" action="editOrder.php">
+        <form id="pizzaOrderForm" method="POST" action="editOrder.php">
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <p>
                 <label for="orderDate">Order for (date & time):</label>
@@ -141,12 +164,11 @@
                     // fetch all the pizzas associated with the order
                     for ($i = 1; $i <= $rowcount; $i++) {
                 ?>  
-                        <li class="pizzaSelection">
-                            <label for="pizzaList">Pizza: </label>
-                            <input list="pizzaList" id="pizzalist_<?php $i ?>" name="pizzaList_<?php $i ?>" placeholder="Pizza" required onclick="javascript: this.value = ''" value="<?php echo $row['pizza']; ?>">
-                            <label for="pizzaQuantity_<?php $i ?>">Number: </label>
-                            <input type="number" name="pizzaQuantity_<?php $i ?>" id="pizzaQuantity_<?php $i ?>" required min="0" max="10" value="<?php echo $row['pizzaQuantity']; ?>">
-                        </li>
+                    <li class="pizzaSelection">
+                        Pizza: <input list="pizzaList" name="pizza[]" placeholder="Pizza" required onclick="javascript: this.value = ''" value="<?php echo $row['pizza']; ?>">
+                        Number: <input type="number" name="quantity[]" required min="0" max="12" value="<?php echo $row['pizzaQuantity']; ?>">
+                        Delete Item: <input type="checkbox" name="delete" onclick='DeletePizza(this)'>
+                    </li>
                 <?php
                         $row = mysqli_fetch_assoc($result);
                     }
@@ -167,10 +189,14 @@
                 <option value="Hawaiian"></option>
             </datalist>
             </p>
+
+            <button id="addPizzaBtn">Add Pizza</button>
+
             <input type="submit" name="submit" value="Update">
             <a href="currentOrders.php">[Cancel]</a>
         </form>
 
+        <script src="js/placeOrder.js"></script>
         <script>
             config = {
                 enableTime: true,

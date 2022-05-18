@@ -11,9 +11,9 @@ form.addEventListener("change", () => {
 
 function AddNew(){
     const row = 
-        `Pizza: <input list="pizzaList" name="selectedPizza" placeholder="Pizza" required
+        `Pizza: <input list="pizzaList" name="pizza[]" placeholder="Pizza" required
         onclick="javascript: this.value = ''" >
-        Number: <input type="number" name="numPizzas" required min="0" max="10">
+        Number: <input type="number" name="quantity[]" required min="0" max="10">
         Delete Item: <input type="checkbox" onclick='DeletePizza(this)'>`
 
     const newLi = document.createElement("li");
@@ -22,7 +22,7 @@ function AddNew(){
 
     olContainer.appendChild(newLi);
 
-    //disable the add button to prevent multiple blabk rows being added
+    //disable the add button to prevent multiple blank rows being added
     document.getElementById('addPizzaBtn').disabled = true;
 }
 
