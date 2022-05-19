@@ -52,15 +52,6 @@
             $id = 0;
         }
 
-        //date and time
-        if (isset($_POST['orderDate']) and !empty($_POST['orderDate'])) { //must have decimal
-            $date = cleanInput($_POST['orderDate']);
-        } else {
-            $error++; //bump the error flag
-            $msg .= 'Invalid order date and time '; //append eror message
-            $date = '';
-        }
-
         //extras
         if (isset($_POST['extras']) and is_string($_POST['extras'])) {
             $ex = cleanInput($_POST['extras']);
@@ -130,8 +121,6 @@
             echo "<h2>$msg</h2>" . PHP_EOL;
         }
     }
-    //locate the food item to edit by using the itemID
-    //we also include the item ID in our form for sending it back for saving the data
 
     $query = 'SELECT orders.orderID, booking.bookingdate, customer.lastname, customer.firstname, orderlines.extras,
         fooditems.pizza, orderlines.pizzaQuantity
@@ -154,7 +143,7 @@
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <p>
                 <label for="orderDate">Order for (date & time):</label>
-                <input id="orderDate" name="orderDate" value="<?php echo $row['bookingdate']; ?>" required>
+                <input id="orderDate" readonly="true" name="orderDate" value="<?php echo $row['bookingdate']; ?>">
             </p>
             <p>
                 Pizza order for customer: <?php echo $row['lastname']; ?>, <?php echo $row['firstname']; ?>
@@ -202,16 +191,6 @@
         </form>
 
         <script src="js/placeOrder.js"></script>
-        <script>
-            config = {
-                enableTime: true,
-                dateFormat: "Y-m-d H:1"
-            }
-            flatpickr("#orderDate", {
-                config
-            });
-            console.log(config)
-        </script>
     <?php
     } else {
         echo "<h2>Order not found with that ID</h2>"; //simple error feedback

@@ -40,8 +40,7 @@ function login($id, $username) {
    if ($_SESSION['loggedin'] == 0 and !empty($_SESSION['URI']))        
         $uri = $_SESSION['URI'];          
    else { 
-       //change url!!!!!!!!!!!!!!
-     $_SESSION['URI'] =  'http://localhost/pizza/listcustomers.php';         
+     $_SESSION['URI'] =  'http://localhost/pizza/index.php';         
      $uri = $_SESSION['URI'];           
    }  
 

@@ -5,6 +5,7 @@
 <body>
 
 <?php
+
 include "checksession.php";
 // Check if user is logged in; if not, redirect to login page.
 checkUser(); 
@@ -31,22 +32,13 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
   
     $error = 0; //clear our error flag
 
-    if (isset($_POST['customerId']) and !empty($_POST['customerId']) and is_integer(intval($_POST['customerId']))) {
-        $id = cleanInput($_POST['customerId']);
+    if (isset($_POST['bookingId']) and !empty($_POST['bookingId']) and is_integer(intval($_POST['bookingId']))) {
+        $bookingId = cleanInput($_POST['bookingId']);
     } else {
         $error++; //bump the error flag
-        $msg .= 'Invalid customer ID '; //append error message
+        $msg .= 'Invalid booking ID '; //append error message
         $id = 0;
     }
-
-    //date and time
-    if (isset($_POST['orderDate']) and !empty($_POST['orderDate'])) { //must have decimal
-        $date = cleanInput($_POST['orderDate']);  
-    } else {
-        $error++; //bump the error flag
-        $msg .= 'Invalid order date and time '; //append eror message
-        $date = '';  
-    }       
 
     //extras
     if (isset($_POST['extras']) and is_string($_POST['extras'])) {
@@ -90,7 +82,22 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
     }
 
     if ($error == 0) {
+        //Create the new order
+        $query = "INSERT INTO orders (bookingID) VALUES (?)";
+        $stmt = mysqli_prepare($DBC,$query); //prepare the query
+        mysqli_stmt_bind_param($stmt,'i', $bookingId); 
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
 
+        //Get the newly created orderId
+        $query = 'SELECT orderID
+                  FROM orders
+                  WHERE bookingID='.$bookingId;
+        $result = mysqli_query($DBC, $query);
+        $row = mysqli_fetch_assoc($result);
+        $id = $row['orderID'];
+
+        //Create the orderlines
         for($i = 0; $i < count($pizzas); $i++) {
             $pizza = $pizzas[$i];
             $quantity = $quantities[$i];
@@ -111,13 +118,16 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
     } 
 }
 
+/* Presumably the bookingId will need to be passed into the page later when the rest of the pages 
+are completed. For now, just select the bookingId's from the booking table and choose the first one. */
 $customerId = $_SESSION['userid'];
-$query = 'SELECT customer.lastname, customer.firstname
-          FROM customer
-          WHERE customerID='.$id;
-
+$query = "SELECT booking.bookingID, booking.bookingdate, customer.lastname, customer.firstname
+          FROM customer, booking
+          WHERE booking.customerID = customer.customerID 
+          AND customer.customerID=".$customerId;
 $result = mysqli_query($DBC, $query);
 $rowcount = mysqli_num_rows($result);
+
 if ($rowcount > 0) {
     $row = mysqli_fetch_assoc($result);
 ?>
@@ -128,11 +138,14 @@ if ($rowcount > 0) {
             <h2>Pizza order for customer: <?php echo $row['lastname']; ?>, <?php echo $row['firstname']; ?></h2>
         </div>
         <form id="pizzaOrderForm" method="POST" action="placeOrder.php">
-            <input type="hidden" name="customerId" value="<?php echo $customerId; ?>">
+            <input type="hidden" name="bookingId" value="<?php echo $row['bookingID']; ?>">
+
             <label for="orderDate">Order for (date & time):</label>
-            <input id="orderDate" name="orderDate" required>
+            <input id="orderDate" readonly="true" name="orderDate" value="<?php echo $row['bookingdate']; ?>">
+
             <label for="extras">Extras:</label>
             <input type="text" name="extras" id="extras" maxlength="100">
+
             <hr>
             <h3>Pizzas for this order:</h3>
             <ol id="olContainer">
@@ -160,23 +173,13 @@ if ($rowcount > 0) {
             <button id="addPizzaBtn" disabled="true">Add Pizza</button>
 
             <input type="submit" name="submit" value="Place Order">
-            <div id="cancel">
-                <a href="placeOrder.html">[Cancel]</a>
-            </div>
+            <a href="currentOrders.php">[Cancel]</a>
         </form>
     </div>
     <script src="js/placeOrder.js"></script>
-    <script>
-        config = {
-            enableTime: true,
-            dateFormat: "Y-m-d H:1"
-        }
-        flatpickr("#orderDate", { config });
-        console.log(config)
-    </script>
 <?php
 } else {
-    echo "<h2>Could not retrieve customer information</h2>"; //simple error feedback
+    echo "<h2>No booking has been made</h2>"; //simple error feedback
 }
 mysqli_close($DBC); //close the connection once done
 ?>

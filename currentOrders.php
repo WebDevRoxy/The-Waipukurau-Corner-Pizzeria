@@ -2,6 +2,12 @@
 <html><head><title>Browse orders</title> </head>
 <body>
 <?php
+include "checksession.php";
+// Check if user is logged in; if not, redirect to login page.
+checkUser(); 
+
+echo "Logged in as ".$_SESSION['username'];
+
 include "config.php"; //load in any variables
 $DBC = mysqli_connect("localhost", DBUSER, DBPASSWORD, DBDATABASE);
  
@@ -10,13 +16,18 @@ if (mysqli_connect_errno()) {
     exit;
 }
 
-
- 
+$customerId = $_SESSION['userid'];
 $query = 'SELECT orders.orderID, booking.bookingDate, customer.lastname, customer.firstname
 FROM orders, customer, booking  
 WHERE orders.bookingID = booking.bookingID
 AND booking.customerID = customer.customerID';
-$result = mysqli_query($DBC,$query);
+
+// If not an admin, then can only view orders for the logged in customer
+if (!isAdmin()) {
+    $query .= " AND customer.customerID=".$customerId;
+}
+
+$result = mysqli_query($DBC, $query);
 $rowcount = mysqli_num_rows($result); 
 /* turnoff PHP to use some HTML - this quicker to do than php echos,
    we have an example of embedding php in small parts – see member count below
