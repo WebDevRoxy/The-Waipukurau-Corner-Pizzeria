@@ -2,29 +2,6 @@ DROP DATABASE IF EXISTS pizza;
 CREATE DATABASE IF NOT EXISTS pizza;
 USE pizza;
 
--- Member table
-DROP TABLE IF EXISTS member;
-CREATE TABLE member (
-  memberID  int unsigned NOT NULL auto_increment,
-  firstname varchar(255) default NULL,
-  lastname  varchar(255) default NULL,
-  email     varchar(255) default NULL,
-  username  varchar(32),
-  password  varchar(32),
-  role      tinyint(1),
-  PRIMARY KEY (memberID)
-) AUTO_INCREMENT=1;
-
-INSERT INTO `member` (`memberID`,`firstname`,`lastname`,`email`,`username`,`password`,`role`)
-VALUES
-  (1,"Admin","Admin","","Admin","Admin",1),
-  (2,"Dennis","Pollard","congue@icloud.ca","hendrerit","mollis",1),
-  (3,"Rama","Carney","nunc.ullamcorper.eu@yahoo.ca","at,","lobortis",1),
-  (4,"Julie","Browning","nonummy.ut.molestie@hotmail.couk","rhoncus","ipsum.",0),
-  (5,"Griffin","Rogers","ullamcorper@yahoo.ca","In","elementum",0),
-  (6,"Kellie","Quinn","fames.ac@icloud.net","Donec","Phasellus",1);
-
-
 -- The items/products for the Pizzeria
 DROP TABLE IF EXISTS fooditems;
 CREATE TABLE IF NOT EXISTS fooditems (
@@ -73,10 +50,6 @@ insert into booking (bookingID, customerID, telephone, bookingdate, people) valu
 insert into booking (bookingID, customerID, telephone, bookingdate, people) values (11, 4, '382-125-5641', '2021-01-16 17:42:15', 5);
 insert into booking (bookingID, customerID, telephone, bookingdate, people) values (12, 7, '507-644-2363', '2021-03-24 05:13:46', 3);
 
--- My order by booking date
-
-SELECT * FROM booking ORDER BY bookingdate;
-
 -- Customers
 DROP TABLE IF EXISTS customer;
 CREATE TABLE IF NOT EXISTS customer (
@@ -84,34 +57,33 @@ CREATE TABLE IF NOT EXISTS customer (
   firstname varchar(50) NOT NULL,
   lastname varchar(50) NOT NULL,
   email varchar(100) NOT NULL,  
-  password varchar(40) NOT NULL default '.',
+  username  varchar(32),
+  password  varchar(32) default '.',
+  role tinyint(1) default 0,
   PRIMARY KEY (customerID)
 ) AUTO_INCREMENT=1;
 
-INSERT INTO customer (customerID,firstname,lastname,email) VALUES 
-(2,"Desiree","Collier","Maecenas@non.co.uk"),
-(3,"Irene","Walker","id.erat.Etiam@id.org"),
-(4,"Forrest","Baldwin","eget.nisi.dictum@a.com"),
-(5,"Beverly","Sellers","ultricies.sem@pharetraQuisqueac.co.uk"),
-(6,"Glenna","Kinney","dolor@orcilobortisaugue.org"),
-(7,"Montana","Gallagher","sapien.cursus@ultriciesdignissimlacus.edu"),(8,"Harlan","Lara","Duis@aliquetodioEtiam.edu"),
-(9,"Benjamin","King","mollis@Nullainterdum.org"),
-(10,"Rajah","Olsen","Vestibulum.ut.eros@nequevenenatislacus.ca"),
-(11,"Castor","Kelly","Fusce.feugiat.Lorem@porta.co.uk"),
-(12,"Omar","Oconnor","eu.turpis@auctorvelit.co.uk"),
-(13,"Porter","Leonard","dui.Fusce@accumsanlaoreet.net"),
-(14,"Buckminster","Gaines","convallis.convallis.dolor@ligula.co.uk"),
-(15,"Hunter","Rodriquez","ridiculus.mus.Donec@est.co.uk"),
-(16,"Zahir","Harper","vel@estNunc.com"),
-(17,"Sopoline","Warner","vestibulum.nec.euismod@sitamet.co.uk"),
-(18,"Burton","Parrish","consequat.nec.mollis@nequenonquam.org"),
-(19,"Abbot","Rose","non@et.ca"),
-(20,"Barry","Burks","risus@libero.net");
-
--- special account for the purposes of this exercise
--- refer to the checksession.php on how it is used
-INSERT INTO customer (customerID,firstname,lastname,email,password) VALUES 
-(1,"Admin","Admin","admin@pizza.com","password");
+INSERT INTO customer (customerID,firstname,lastname,email,username,password,role) VALUES 
+(1,"Admin","Admin","admin@pizza.com","Admin","Admin", 1),
+(2,"Desiree","Collier","Maecenas@non.co.uk", 'Collier', 'password', 0),
+(3,"Irene","Walker","id.erat.Etiam@id.org", 'Walker', 'password', 0),
+(4,"Forrest","Baldwin","eget.nisi.dictum@a.com", 'Baldwin', 'password', 0),
+(5,"Beverly","Sellers","ultricies.sem@pharetraQuisqueac.co.uk", 'Sellers', 'password', 0),
+(6,"Glenna","Kinney","dolor@orcilobortisaugue.org", 'Kinney', 'password', 0),
+(7,"Montana","Gallagher","sapien.cursus@ultriciesdignissimlacus.edu", 'Gallagher', 'password', 0),
+(8,"Harlan","Lara","Duis@aliquetodioEtiam.edu", 'Lara', 'password', 0),
+(9,"Benjamin","King","mollis@Nullainterdum.org", 'King', 'password', 0),
+(10,"Rajah","Olsen","Vestibulum.ut.eros@nequevenenatislacus.ca", 'Olsen', 'password', 0),
+(11,"Castor","Kelly","Fusce.feugiat.Lorem@porta.co.uk", 'Kelly', 'password', 0),
+(12,"Omar","Oconnor","eu.turpis@auctorvelit.co.uk", 'Oconnor', 'password', 0),
+(13,"Porter","Leonard","dui.Fusce@accumsanlaoreet.net", 'Leonard', 'password', 0),
+(14,"Buckminster","Gaines","convallis.convallis.dolor@ligula.co.uk", 'Gaines', 'password', 0),
+(15,"Hunter","Rodriquez","ridiculus.mus.Donec@est.co.uk", 'Rodriquez', 'password', 0),
+(16,"Zahir","Harper","vel@estNunc.com", 'Harper', 'password', 0),
+(17,"Sopoline","Warner","vestibulum.nec.euismod@sitamet.co.uk", 'Warner', 'password', 0),
+(18,"Burton","Parrish","consequat.nec.mollis@nequenonquam.org", 'Parrish', 'password', 0),
+(19,"Abbot","Rose","non@et.ca", 'Rose', 'password', 0),
+(20,"Barry","Burks","risus@libero.net", 'Burks', 'password', 0);
 
 -- Current orders
 DROP TABLE IF EXISTS orders;

@@ -8,8 +8,14 @@
 </head>
 
 <body>
-
     <?php
+
+    include "checksession.php";
+    // Check if user is logged in; if not, redirect to login page.
+    checkUser(); 
+
+    echo "Logged in as ".$_SESSION['username'];
+
     include "config.php"; //load in any variables
     $DBC = mysqli_connect("localhost", DBUSER, DBPASSWORD, DBDATABASE);
 
@@ -35,10 +41,9 @@
 
     //check if we are saving data first by checking if the submit button exists in the array
     if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] == 'Update')) {
-        //validate incoming data - only the first field is done for you in this example - rest is up to you do
 
-        //refer to additems for extend validation examples
-        //itemID (sent via a form it is a string not a number so we try a type conversion!)    
+        $error = 0; //clear our error flag
+
         if (isset($_POST['id']) and !empty($_POST['id']) and is_integer(intval($_POST['id']))) {
             $id = cleanInput($_POST['id']);
         } else {

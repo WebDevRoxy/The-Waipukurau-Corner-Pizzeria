@@ -12,7 +12,7 @@
 <li><a href="listitems.php">Food items listing</a>
 <li><a href="currentBookings.html">Bookings listing</a>
 <li><a href="ordersListing.php">Orders listing</a>
-<li><a href="converted_template\login.php">Login</a>
+<li><a href="login.php">Login</a>
 </ul>
 
 </body>

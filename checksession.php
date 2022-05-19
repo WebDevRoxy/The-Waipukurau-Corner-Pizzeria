@@ -1,12 +1,6 @@
 <?php
 session_start();
 
-//overrides for development purposes only - comment this out when testing the login
-$_SESSION['loggedin'] = 0;     
-$_SESSION['userid'] = 1; //this is the ID for the admin user  
-$_SESSION['username'] = 'Test';
-//end of overrides
-
 function isAdmin() {
  if (($_SESSION['loggedin'] == 1) and ($_SESSION['userid'] == 1)) 
      return TRUE;
@@ -16,20 +10,17 @@ function isAdmin() {
 
 //function to check if the user is logged else send to the login page 
 function checkUser() {
-return true;
     $_SESSION['URI'] = '';    
     if ($_SESSION['loggedin'] == 1)
        return TRUE;
     else {
-        //add localhost server here!!!!!!!!!!!!
        $_SESSION['URI'] = 'http://localhost'.$_SERVER['REQUEST_URI']; //save current url for redirect     
-       header('Location: http://localhost/pizza/converted_template/login.php', true, 303);    
+       header('Location: http://localhost/pizza/login.php', true, 303);    
 
        //header mitigaton!!!!!!!!!!!!!!
        header("Access-Control-Allow-Origin: *");   
     }       
 }
-
 
 //just to show we are are logged in
 function loginStatus() {
@@ -44,7 +35,7 @@ function loginStatus() {
 }
 
 //log a user in
-function login($id,$username) {
+function login($id, $username) {
    //simple redirect if a user tries to access a page they have not logged in to
    if ($_SESSION['loggedin'] == 0 and !empty($_SESSION['URI']))        
         $uri = $_SESSION['URI'];          
@@ -67,6 +58,6 @@ function logout(){
   $_SESSION['userid'] = -1;        
   $_SESSION['username'] = '';
   $_SESSION['URI'] = '';
-  header('Location: http://localhost/pizza/converted_template/login.php', true, 303);    
+  header('Location: http://localhost/pizza/login.php', true, 303);    
 }
 ?>
