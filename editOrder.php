@@ -30,7 +30,7 @@
         return htmlspecialchars(stripslashes(trim($data)));
     }
 
-    //retrieve the itemid from the URL
+    //retrieve the orderid from the URL
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $id = $_GET['id'];
         if (empty($id) or !is_numeric($id)) {

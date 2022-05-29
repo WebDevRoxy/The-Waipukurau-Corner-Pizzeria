@@ -33,7 +33,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     } 
 }
 
-if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] == 'Delete')) {     
+if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] == 'Delete')) { 
+    $error = 0; //clear our error flag
+    $msg = 'Error: ';      
+    
     if (isset($_POST['id']) and !empty($_POST['id']) and is_integer(intval($_POST['id']))) {
         $id = cleanInput($_POST['id']);
     } else {
@@ -41,17 +44,21 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
         $msg .= 'Invalid order ID '; //append error message
         $id = 0;
     }
-    $query = "DELETE FROM orderlines WHERE orderID=?";
-    $stmt = mysqli_prepare($DBC,$query); //prepare the query
-    mysqli_stmt_bind_param($stmt,'i', $id); 
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
-    $query = "DELETE FROM orders WHERE orderID=?";
-    $stmt = mysqli_prepare($DBC,$query); //prepare the query
-    mysqli_stmt_bind_param($stmt,'i', $id); 
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);  
-    echo "<h2>Order details deleted.</h2>";        
+    if ($error == 0) {
+        $query = "DELETE FROM orderlines WHERE orderID=?";
+        $stmt = mysqli_prepare($DBC,$query); //prepare the query
+        mysqli_stmt_bind_param($stmt,'i', $id); 
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        $query = "DELETE FROM orders WHERE orderID=?";
+        $stmt = mysqli_prepare($DBC,$query); //prepare the query
+        mysqli_stmt_bind_param($stmt,'i', $id); 
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);  
+        echo "<h2>Order details deleted.</h2>";      
+    } else { 
+        echo "<h2>$msg</h2>".PHP_EOL;
+    }  
 }
 
 //prepare a query and send it to the server
