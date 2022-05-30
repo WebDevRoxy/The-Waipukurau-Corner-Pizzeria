@@ -9,8 +9,7 @@
 include "checksession.php";
 // Check if user is logged in; if not, redirect to login page.
 checkUser(); 
-
-echo "Logged in as ".$_SESSION['username'];
+loginStatus(); 
 
 include "config.php"; //load in any variables
 
@@ -24,6 +23,15 @@ if (mysqli_connect_errno()) {
 //function to clean input but not validate type and content
 function cleanInput($data) {  
   return htmlspecialchars(stripslashes(trim($data)));
+}
+
+//retrieve the booking Id from the URL
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    $bookingId = $_GET['bookingId'];
+    if (empty($bookingId) or !is_numeric($bookingId)) {
+        echo "<h2>Invalid booking ID</h2>"; //simple error feedback
+        exit;
+    }
 }
 
 //the data was sent using a formtherefore we use the $_POST instead of $_GET
@@ -118,13 +126,9 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
     } 
 }
 
-/* Presumably the bookingId will need to be passed into the page later when the rest of the pages 
-are completed. For now, just select the bookingId's from the booking table and choose the first one. */
-$customerId = $_SESSION['userid'];
-$query = "SELECT booking.bookingID, booking.bookingdate, customer.lastname, customer.firstname
-          FROM customer, booking
-          WHERE booking.customerID = customer.customerID 
-          AND customer.customerID=".$customerId;
+$query = "SELECT *
+          FROM booking 
+          WHERE booking.bookingID=".$bookingId;
 $result = mysqli_query($DBC, $query);
 $rowcount = mysqli_num_rows($result);
 
@@ -138,7 +142,7 @@ if ($rowcount > 0) {
             <h2>Pizza order for customer: <?php echo $row['lastname']; ?>, <?php echo $row['firstname']; ?></h2>
         </div>
         <form id="pizzaOrderForm" method="POST" action="placeOrder.php">
-            <input type="hidden" name="bookingId" value="<?php echo $row['bookingID']; ?>">
+            <input type="hidden" name="bookingId" value="<?php echo $bookingId; ?>">
 
             <label for="orderDate">Order for (date & time):</label>
             <input id="orderDate" readonly="true" name="orderDate" value="<?php echo $row['bookingdate']; ?>">
@@ -179,7 +183,7 @@ if ($rowcount > 0) {
     <script src="js/placeOrder.js"></script>
 <?php
 } else {
-    echo "<h2>No booking has been made</h2>"; //simple error feedback
+    echo "<h2>No booking foound for the booking Id. Cannot place order.</h2>"; //simple error feedback
 }
 mysqli_close($DBC); //close the connection once done
 ?>

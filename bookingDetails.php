@@ -7,8 +7,7 @@
 include "checksession.php";
 // Check if user is logged in; if not, redirect to login page.
 checkUser(); 
-
-echo "Logged in as ".$_SESSION['username'];
+loginStatus(); 
 
 include "config.php"; //load in any variables
 $DBC = mysqli_connect("localhost", DBUSER, DBPASSWORD, DBDATABASE);
@@ -42,7 +41,7 @@ $rowcount = mysqli_num_rows($result);
     <div>
         <ul id="navigation">
             <li>
-                <a href="bookingsListing.php">[Return to the bookings listing]</a>
+                <a href="currentBookings.php">[Return to the bookings listing]</a>
             </li>
             <li>
                 <a href="index.php">[Return to the main page]</a>

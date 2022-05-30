@@ -7,16 +7,16 @@
     <title>The Waipukurau Corner Pizzeria</title>
     <link rel="stylesheet" href="css/style.css" type="text/css">
     <link rel="stylesheet" href="css/mobile.css" type="text/css">
-    <script src="js/mobile.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
 <body>
 <?php
-
 include "checksession.php";
 // Check if user is logged in; if not, redirect to login page.
 checkUser(); 
-loginStatus(); ;
+loginStatus(); 
 
 include "config.php"; //load in any variables
 $DBC = mysqli_connect("localhost", DBUSER, DBPASSWORD, DBDATABASE);
@@ -32,25 +32,25 @@ function cleanInput($data)
     return htmlspecialchars(stripslashes(trim($data)));
 }
 
-//retrieve the booking Id from the URL
+//retrieve the customer Id from the URL
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $bookingId = $_GET['bookingId'];
-    if (empty($bookingId) or !is_numeric($bookingId)) {
-        echo "<h2>Invalid booking ID</h2>"; //simple error feedback
+    $customerId = $_GET['customerId'];
+    if (empty($customerId) or !is_numeric($customerId)) {
+        echo "<h2>Invalid customer ID</h2>"; //simple error feedback
         exit;
     }
 }
 
-//check if we are saving data first by checking if the submit button exists in the array
-if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] == 'Update')) {
+  //check if we are saving data first by checking if the submit button exists in the array
+if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] == 'Add')) {
 
     $error = 0; //clear our error flag
 
-    if (isset($_POST['bookingId']) and !empty($_POST['bookingId']) and is_integer(intval($_POST['bookingId']))) {
-        $bookingId = cleanInput($_POST['bookingId']);
+    if (isset($_POST['customerId']) and !empty($_POST['customerId']) and is_integer(intval($_POST['customerId']))) {
+        $customerId = cleanInput($_POST['customerId']);
     } else {
         $error++; //bump the error flag
-        $msg .= 'Invalid booking ID '; //append error message
+        $msg .= 'Invalid customer ID '; //append error message
     }
 
     if (isset($_POST['bookingDate']) and !empty($_POST['bookingDate']) and is_string($_POST['bookingDate'])) {
@@ -76,36 +76,31 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
     
     //save the booking data if the error flag is still clear 
     if ($error == 0) {
-
-        $query = "UPDATE booking 
-                  SET telephone = ?, 
-                      bookingdate = ?, 
-                      people = ?
-                  WHERE
-                      bookingId = ?";
+        $query = "INSERT INTO booking (customerID, telephone, bookingdate, people) 
+                  VALUES (?, ?, ?, ?)";
 
         $stmt = mysqli_prepare($DBC, $query); //prepare the query
-        mysqli_stmt_bind_param($stmt,'ssii', $telephone, $bookingdate, $people, $bookingId); 
+        mysqli_stmt_bind_param($stmt,'issi', $customerId, $telephone, $bookingdate, $people); 
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
-        echo "<h2>Booking details updated.</h2>";
+        echo "<h2>Booking added.</h2>";
     } else {
         echo "<h2>$msg</h2>" . PHP_EOL;
     }
 }
+  
+$query = "SELECT customer.lastname, customer.firstname
+          FROM customer 
+          WHERE customer.customerID=".$customerId;
+$result = mysqli_query($DBC, $query);
+$rowcount = mysqli_num_rows($result);
 
-//prepare a query and send it to the server
-$query = 'SELECT customer.lastname, customer.firstname, booking.telephone, booking.bookingdate, booking.people
-FROM customer, booking  
-WHERE booking.customerID = customer.customerID
-AND booking.bookingID='.$bookingId;
-
-$result = mysqli_query($DBC,$query);
-$rowcount = mysqli_num_rows($result); 
+if ($rowcount > 0) {
+    $row = mysqli_fetch_assoc($result);
 ?>
     <div id="pageHeader">
-        <h1>Edit a booking</h1>
+        <h1>Make a booking</h1>
     </div>
     <div>
         <ul id="navigation">
@@ -117,41 +112,49 @@ $rowcount = mysqli_num_rows($result);
             </li>
         </ul>
     </div>
-    <?php
-    if ($rowcount > 0) {
-        $row = mysqli_fetch_assoc($result);
-    ?>
-    <div id="testBooking">
+    <div id="customerBooking">
         <div id="bookingHeader">
-            <h2>Booking made for <?php echo $row['lastname'].', '.$row['firstname']; ?></h2>
+            <h2>Booking for: <?php echo $row['lastname']; ?>, <?php echo $row['firstname']; ?></h2>
         </div>
-        <form id="bookingForm" method="POST" action="editBooking.php">
-            <input type="hidden" name="bookingId" value="<?php echo $bookingId; ?>">
+        <form id="bookingForm" method="POST" action="makeBooking.php">      
             
+            <input type="hidden" name="customerId" value="<?php echo $customerId; ?>">        
+
             <p>
                 <label for="bookingDate">Booking date & time:</label>
-                <input type="datetime" name="bookingDate" id="bookingDate" placeholder="yyyy-mm-dd HH:MM" value="<?php echo $row['bookingdate']; ?>" required>
+                <input type="datetime" name="bookingDate" id="bookingDate" placeholder="yyyy-mm-dd HH:MM" required>
             </p>
 
             <p>
                 <label for="contactNumber">Contact number:</label>
-                <input type="tel" name="contactNumber" id="contactNumber" placeholder="###-###-####" value="<?php echo $row['telephone']; ?>" required pattern="^{[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*}$">
+                <input type="tel" name="contactNumber" id="contactNumber" placeholder="###-###-####" required pattern="^{[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*}$">
             </p>
 
             <p>
                 <label for="partySize">Party size (# people, 1-10):</label>
-                <input type="number" name="partySize" id="partySize" value="<?php echo $row['people']; ?>" required min="1" max="10">
+                <input type="number" name="partySize" id="partySize" required min="1" max="10">
             </p>
 
-            <input type="submit" name="submit" value="Update">
+            <input type="submit" name="submit" value="Add">
             <a href="currentBookings.php">[Cancel]</a>
         </form>
-    <?php
-    } else {
-        echo "<h2>No booking found with that ID</h2>"; //simple error feedback
-    }
-    mysqli_close($DBC); //close the connection once done
-    ?>
-</body>
+    </div>
 
+    <script>
+        config = {
+            enableTime: true,
+            dateFormat: "Y-m-d H:1"
+        }
+
+        flatpickr("#bookingDate", { config });
+        console.log(config)
+    </script>
+
+<?php
+} else {
+    echo "<h2>No customer found with that customer Id. Cannot make booking.</h2>"; //simple error feedback
+}
+mysqli_close($DBC); //close the connection once done
+?>
+</body>
 </html>

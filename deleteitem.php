@@ -83,7 +83,7 @@ if ($rowcount > 0) {
      <a href="listitems.php">[Cancel]</a>
      </form>
 <?php    
-} else echo "<h2>No Food Item found, possbily deleted!</h2>"; //suitable feedback
+} else echo "<h2>No Food Item found, possibly deleted!</h2>"; //suitable feedback
 
 mysqli_free_result($result); //free any memory used by the query
 mysqli_close($DBC); //close the connection once done

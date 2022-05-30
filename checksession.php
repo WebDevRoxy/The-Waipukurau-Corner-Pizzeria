@@ -1,12 +1,20 @@
 <?php
 session_start();
 
+//commented out to check login function
 function isAdmin() {
  if (($_SESSION['loggedin'] == 1) and ($_SESSION['userid'] == 1)) 
      return TRUE;
  else 
      return FALSE;
 }
+
+//roles
+/*session_start();
+define(AC_ADMIN,9);
+define(AC_MANAGER,8);
+define(AC_AUTHENTICATED,4);
+define(AC_GUEST,0);*/
 
 //function to check if the user is logged else send to the login page 
 function checkUser() {
@@ -17,7 +25,7 @@ function checkUser() {
        $_SESSION['URI'] = 'http://localhost'.$_SERVER['REQUEST_URI']; //save current url for redirect     
        header('Location: http://localhost/pizza/login.php', true, 303);    
 
-       //header mitigaton!!!!!!!!!!!!!!
+       //header mitigaton
        header("Access-Control-Allow-Origin: *");   
     }       
 }
@@ -59,4 +67,13 @@ function logout(){
   $_SESSION['URI'] = '';
   header('Location: http://localhost/pizza/login.php', true, 303);    
 }
+
+//check if user is an admin or customer
+
+
+
+
+
 ?>
+
+

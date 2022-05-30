@@ -13,8 +13,7 @@
     include "checksession.php";
     // Check if user is logged in; if not, redirect to login page.
     checkUser(); 
-
-    echo "Logged in as ".$_SESSION['username'];
+    loginStatus(); 
 
     include "config.php"; //load in any variables
     $DBC = mysqli_connect("localhost", DBUSER, DBPASSWORD, DBDATABASE);
