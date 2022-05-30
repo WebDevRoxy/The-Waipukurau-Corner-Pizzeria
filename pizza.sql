@@ -89,24 +89,25 @@ INSERT INTO customer (customerID,firstname,lastname,email,username,password,role
 DROP TABLE IF EXISTS orders;
 CREATE TABLE IF NOT EXISTS orders (
   orderID int unsigned NOT NULL auto_increment,
-  bookingID int unsigned NOT NULL,
+  customerID int unsigned NOT NULL,
+  orderdate datetime,
   PRIMARY KEY (orderID),
-  FOREIGN KEY (bookingID) REFERENCES booking(bookingID)
+  FOREIGN KEY (customerID) REFERENCES customer(customerID)
 ) AUTO_INCREMENT=1;
 
-INSERT INTO orders (orderID, bookingID) VALUES 
-  (1, 1),
-  (2, 2),
-  (3, 3),
-  (4, 4),
-  (5, 5),
-  (6, 6),
-  (7, 7),
-  (8, 8),
-  (9, 9),
-  (10, 10),
-  (11, 11),
-  (12, 12);
+INSERT INTO orders (orderID, customerID, orderdate) VALUES 
+  (1, 1,'2021-12-18 17:29:36'),
+  (2, 2,'2021-12-19 17:01:36'),
+  (3, 3,'2021-12-20 17:00:36'),
+  (4, 4,'2021-12-18 17:29:36'),
+  (5, 5,'2021-12-15 17:29:36'),
+  (6, 6,'2021-11-18 17:01:36'),
+  (7, 7,'2021-12-19 17:29:36'),
+  (8, 8,'2021-12-20 17:29:36'),
+  (9, 9,'2021-12-21 17:29:36'),
+  (10, 10,'2021-12-22 17:29:36'),
+  (11, 11,'2021-12-23 17:29:36'),
+  (12, 12,'2021-12-24 17:29:36');
 
 -- Ability to add multiple food items to same order
 DROP TABLE IF EXISTS orderlines;

@@ -25,11 +25,11 @@ function cleanInput($data) {
   return htmlspecialchars(stripslashes(trim($data)));
 }
 
-//retrieve the booking Id from the URL
+//retrieve the customer Id from the URL
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $bookingId = $_GET['bookingId'];
-    if (empty($bookingId) or !is_numeric($bookingId)) {
-        echo "<h2>Invalid booking ID</h2>"; //simple error feedback
+    $customerId = $_GET['customerId'];
+    if (empty($customerId) or !is_numeric($customerId)) {
+        echo "<h2>Invalid customer ID</h2>"; //simple error feedback
         exit;
     }
 }
@@ -40,13 +40,19 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
   
     $error = 0; //clear our error flag
 
-    if (isset($_POST['bookingId']) and !empty($_POST['bookingId']) and is_integer(intval($_POST['bookingId']))) {
-        $bookingId = cleanInput($_POST['bookingId']);
+    if (isset($_POST['customerId']) and !empty($_POST['customerId']) and is_integer(intval($_POST['customerId']))) {
+        $customerId = cleanInput($_POST['customerId']);
     } else {
         $error++; //bump the error flag
-        $msg .= 'Invalid booking ID '; //append error message
-        $id = 0;
+        $msg .= 'Invalid customer ID '; //append error message
     }
+
+    if (isset($_POST['orderDate']) and !empty($_POST['orderDate']) and is_string($_POST['orderDate'])) {
+        $orderDate = cleanInput($_POST['orderDate']);
+    } else {
+        $error++; //bump the error flag
+        $msg .= 'Invalid order date '; //append error message
+    }   
 
     //extras
     if (isset($_POST['extras']) and is_string($_POST['extras'])) {
@@ -56,7 +62,6 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
     } else {
         $error++; //bump the error flag
         $msg .= 'Invalid extras  '; //append eror message
-        $extras = '';  
     }       
 
     // pizza dropdowns
@@ -91,16 +96,16 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
 
     if ($error == 0) {
         //Create the new order
-        $query = "INSERT INTO orders (bookingID) VALUES (?)";
+        $query = "INSERT INTO orders (customerID, orderdate) VALUES (?,?)";
         $stmt = mysqli_prepare($DBC,$query); //prepare the query
-        mysqli_stmt_bind_param($stmt,'i', $bookingId); 
+        mysqli_stmt_bind_param($stmt,'is', $customerId, $orderDate); 
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
         //Get the newly created orderId
         $query = 'SELECT orderID
                   FROM orders
-                  WHERE bookingID='.$bookingId;
+                  WHERE customerID='.$customerId.' AND orderdate="'.$orderDate.'"';
         $result = mysqli_query($DBC, $query);
         $row = mysqli_fetch_assoc($result);
         $id = $row['orderID'];
@@ -126,9 +131,9 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
     } 
 }
 
-$query = "SELECT *
-          FROM booking 
-          WHERE booking.bookingID=".$bookingId;
+$query = "SELECT firstname, lastname
+          FROM customer 
+          WHERE customer.customerID=".$customerId;
 $result = mysqli_query($DBC, $query);
 $rowcount = mysqli_num_rows($result);
 
@@ -142,10 +147,10 @@ if ($rowcount > 0) {
             <h2>Pizza order for customer: <?php echo $row['lastname']; ?>, <?php echo $row['firstname']; ?></h2>
         </div>
         <form id="pizzaOrderForm" method="POST" action="placeOrder.php">
-            <input type="hidden" name="bookingId" value="<?php echo $bookingId; ?>">
+            <input type="hidden" name="customerId" value="<?php echo $customerId; ?>">
 
             <label for="orderDate">Order for (date & time):</label>
-            <input id="orderDate" readonly="true" name="orderDate" value="<?php echo $row['bookingdate']; ?>">
+            <input type="datetime" name="orderDate" id="orderDate" placeholder="yyyy-mm-dd HH:MM" required>
 
             <label for="extras">Extras:</label>
             <input type="text" name="extras" id="extras" maxlength="100">
@@ -181,9 +186,18 @@ if ($rowcount > 0) {
         </form>
     </div>
     <script src="js/placeOrder.js"></script>
+    <script>
+        config = {
+            enableTime: true,
+            dateFormat: "Y-m-d H:1"
+        }
+
+        flatpickr("#orderDate", { config });
+        console.log(config)
+    </script>
 <?php
 } else {
-    echo "<h2>No booking foound for the booking Id. Cannot place order.</h2>"; //simple error feedback
+echo "<h2>No customer found with that customer Id. Cannot place order.</h2>"; //simple error feedback
 }
 mysqli_close($DBC); //close the connection once done
 ?>

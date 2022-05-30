@@ -121,11 +121,10 @@
         }
     }
 
-    $query = 'SELECT orders.orderID, booking.bookingdate, customer.lastname, customer.firstname, orderlines.extras,
+    $query = 'SELECT orders.orderID, orders.orderdate, customer.lastname, customer.firstname, orderlines.extras,
         fooditems.pizza, orderlines.pizzaQuantity
-    FROM orders, customer, booking, orderlines, fooditems
-    WHERE orders.bookingID = booking.bookingID
-    AND booking.customerID = customer.customerID 
+    FROM orders, customer, orderlines, fooditems
+    WHERE orders.customerID = customer.customerID 
     AND orders.orderID = orderlines.orderID
     AND orderlines.itemID = fooditems.itemID 
     AND orders.orderID='.$id;
@@ -142,7 +141,7 @@
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <p>
                 <label for="orderDate">Order for (date & time):</label>
-                <input id="orderDate" readonly="true" name="orderDate" value="<?php echo $row['bookingdate']; ?>">
+                <input id="orderDate" readonly="true" name="orderDate" value="<?php echo $row['orderdate']; ?>">
             </p>
             <p>
                 Pizza order for customer: <?php echo $row['lastname']; ?>, <?php echo $row['firstname']; ?>

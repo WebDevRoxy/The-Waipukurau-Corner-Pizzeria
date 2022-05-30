@@ -63,10 +63,9 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
 //prepare a query and send it to the server
 //NOTE for simplicity purposes ONLY we are not using prepared queries
 //make sure you ALWAYS use prepared queries when creating custom SQL like below
-$query = 'SELECT customer.customerID, orders.orderID, booking.bookingDate, customer.lastname, customer.firstname, fooditems.pizza, orderlines.orderlinesID, orderlines.pizzaQuantity, orderlines.extras
-FROM orders, customer, booking, fooditems, orderlines
-WHERE orders.bookingID = booking.bookingID
-AND booking.customerID = customer.customerID 
+$query = 'SELECT customer.customerID, orders.orderID, orders.orderDate, customer.lastname, customer.firstname, fooditems.pizza, orderlines.orderlinesID, orderlines.pizzaQuantity, orderlines.extras
+FROM orders, customer, fooditems, orderlines
+WHERE orders.customerID = customer.customerID 
 AND orders.orderID = orderlines.orderID
 AND fooditems.itemID = orderlines.itemID 
 AND orders.orderID='.$id;
@@ -82,7 +81,7 @@ $rowcount = mysqli_num_rows($result);
 if ($rowcount > 0) {  
     echo "<fieldset><legend>Pizza order detail for order #$id</legend><dl>"; 
     $row = mysqli_fetch_assoc($result);
-    echo "<dt>Date & time ordered for:</dt><dd>".$row['bookingDate']."</dd>".PHP_EOL;
+    echo "<dt>Date & time ordered for:</dt><dd>".$row['orderDate']."</dd>".PHP_EOL;
     echo "<dt>Customer name:</dt><dd>".$row['lastname'].', '.$row['firstname']."</dd>".PHP_EOL;
     echo "<dt>Extras:</dt><dd>".$row['extras']."</dd>".PHP_EOL;
     echo "<dt>Pizzas:</dt>";

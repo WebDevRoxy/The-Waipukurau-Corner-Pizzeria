@@ -47,7 +47,7 @@ $rowcount = mysqli_num_rows($result);
             </li>
         </ul>
     </div>
-    <table id="bookingTable">
+    <table id="bookingTable" border="1">
         <input type="text" name="search" id="search" placeholder="Search...">
         <thead>
             <tr>

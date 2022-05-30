@@ -16,10 +16,9 @@ if (mysqli_connect_errno()) {
 }
 
 $customerId = $_SESSION['userid'];
-$query = 'SELECT orders.orderID, booking.bookingDate, customer.lastname, customer.firstname
-FROM orders, customer, booking  
-WHERE orders.bookingID = booking.bookingID
-AND booking.customerID = customer.customerID';
+$query = 'SELECT orders.orderID, orders.orderdate, customer.lastname, customer.firstname
+FROM orders, customer  
+WHERE orders.customerID = customer.customerID';
 
 // If not an admin, then can only view orders for the logged in customer
 if (!isAdmin()) {
@@ -34,7 +33,11 @@ $rowcount = mysqli_num_rows($result);
 ?>
 <h1>Current Orders</h1>
 <h2>Order count <?php echo $rowcount; ?></h2>
-<h2><a href='placeOrder.php'>[Place an order]</a></h2>
+<h2>
+    <?php
+        echo '<a href="placeOrder.php?customerId='.$customerId.'">[Place an order]</a>';
+    ?>
+</h2>
 <h2><a href='index.php'>[Return to main page]</a></h2>
 <table border="1">
 <thead><tr><th>Orders (Date of order, Order number)</th><th>Customer</th><th>Action</th></tr></thead>
@@ -45,7 +48,7 @@ if ($rowcount > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
 	  $id = $row['orderID']; /*check orderID is the right place. bookingdate is from booking,
       orderID could be orderlinesID instead. first and lastname from customer */	
-	  echo '<tr><td>'.$row['bookingDate'] .$row['orderID'].'</td><td>'.$row['lastname'].', '.$row['firstname'].'</td>';
+	  echo '<tr><td>'.$row['orderdate'].' ('.$row['orderID'].')</td><td>'.$row['lastname'].', '.$row['firstname'].'</td>';
       echo     '<td><a href="viewOrder.php?id='.$id.'">[view]</a>';
 	  echo     '<a href="editOrder.php?id='.$id.'">[edit]</a>';
 	  echo     '<a href="deleteOrder.php?id='.$id.'">[delete]</a></td>';
