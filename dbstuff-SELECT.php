@@ -3,7 +3,7 @@
 <body>
 <?php
 include "config.php"; //load in any variables
-$DBC = mysqli_connect("localhost", DBUSER , DBPASSWORD, DBDATABASE);
+$DBC = mysqli_connect(DBHOST, DBUSER , DBPASSWORD, DBDATABASE);
  
 //check if the connection was good
 if (!$DBC) {
@@ -40,7 +40,7 @@ echo "</pre>";
  
 mysqli_close($DBC); //close the connection once done
 
-/* If you are connecting to the localhost, you need to change "127.0.0.1" to "localhost". 
+/* If you are connecting to the localhost, you need to change DBHOST to DBHOST. 
 Also if you are using MAMP with Mac, you need to add extension=mysqli to php.ini file 
 which is located at /Applications/MAMP/conf/php7.4.2/php.ini.*/
 ?>

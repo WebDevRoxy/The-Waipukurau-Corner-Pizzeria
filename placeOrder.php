@@ -14,7 +14,7 @@ loginStatus();
 include "config.php"; //load in any variables
 
 // Connect to database
-$DBC = mysqli_connect("localhost", DBUSER, DBPASSWORD, DBDATABASE);
+$DBC = mysqli_connect(DBHOST, DBUSER, DBPASSWORD, DBDATABASE);
 if (mysqli_connect_errno()) {
     echo "Error: Unable to connect to MySQL. ".mysqli_connect_error() ;
     exit; //stop processing the page further

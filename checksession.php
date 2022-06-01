@@ -9,21 +9,13 @@ function isAdmin() {
      return FALSE;
 }
 
-//roles
-/*session_start();
-define(AC_ADMIN,9);
-define(AC_MANAGER,8);
-define(AC_AUTHENTICATED,4);
-define(AC_GUEST,0);*/
-
-//function to check if the user is logged else send to the login page 
 function checkUser() {
     $_SESSION['URI'] = '';    
     if ($_SESSION['loggedin'] == 1)
        return TRUE;
     else {
-       $_SESSION['URI'] = 'http://localhost'.$_SERVER['REQUEST_URI']; //save current url for redirect     
-       header('Location: http://localhost/pizza/login.php', true, 303);    
+       $_SESSION['URI'] = 'http://waipukuraupizzeria.unaux.com'.$_SERVER['REQUEST_URI']; //save current url for redirect      http://localhost
+       header('Location: http://waipukuraupizzeria.unaux.com/pizza/login.php', true, 303);    // http://localhost/pizza/login.php
 
        //header mitigaton
        header("Access-Control-Allow-Origin: *");   
@@ -48,7 +40,7 @@ function login($id, $username) {
    if ($_SESSION['loggedin'] == 0 and !empty($_SESSION['URI']))        
         $uri = $_SESSION['URI'];          
    else { 
-     $_SESSION['URI'] =  'http://localhost/pizza/index.php';         
+     $_SESSION['URI'] =  'http://waipukuraupizzeria.unaux.com/pizza/index.php';       //'http://localhost/pizza/index.php';   
      $uri = $_SESSION['URI'];           
    }  
 
@@ -65,11 +57,8 @@ function logout(){
   $_SESSION['userid'] = -1;        
   $_SESSION['username'] = '';
   $_SESSION['URI'] = '';
-  header('Location: http://localhost/pizza/login.php', true, 303);    
+  header('Location: http://waipukuraupizzeria.unaux.com/pizza/login.php', true, 303);    //http://localhost/pizza/login.php'
 }
-
-//check if user is an admin or customer
-
 
 
 

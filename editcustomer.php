@@ -4,7 +4,7 @@
 
 <?php
 include "config.php"; //load in any variables
-$DBC = mysqli_connect("127.0.0.1", DBUSER, DBPASSWORD, DBDATABASE);
+$DBC = mysqli_connect(DBHOST, DBUSER, DBPASSWORD, DBDATABASE);
 
 if (mysqli_connect_errno()) {
   echo "Error: Unable to connect to MySQL. ".mysqli_connect_error() ;

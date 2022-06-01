@@ -13,7 +13,7 @@ function cleanInput($data) {
 if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] == 'Add')) {
 //if ($_SERVER["REQUEST_METHOD"] == "POST") { //alternative simpler POST test    
     include "config.php"; //load in any variables
-    $DBC = mysqli_connect("127.0.0.1", DBUSER, DBPASSWORD, DBDATABASE);
+    $DBC = mysqli_connect(DBHOST, DBUSER, DBPASSWORD, DBDATABASE);
 
     if (mysqli_connect_errno()) {
         echo "Error: Unable to connect to MySQL. ".mysqli_connect_error() ;

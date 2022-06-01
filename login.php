@@ -11,7 +11,7 @@ if (isset($_POST['logout'])) logout();
  
 if (isset($_POST['login']) and !empty($_POST['login']) and ($_POST['login'] == 'Login')) {
     include "config.php"; //load in any variables
-    $DBC = mysqli_connect("localhost", DBUSER, DBPASSWORD, DBDATABASE) or die();
+    $DBC = mysqli_connect(DBHOST, DBUSER, DBPASSWORD, DBDATABASE) or die();
  
 //validate incoming data - only the first field is done for you in this example - rest is up to you to do
 //firstname
@@ -44,11 +44,11 @@ if (isset($_POST['login']) and !empty($_POST['login']) and ($_POST['login'] == '
            //if (password_verify($password, $row['password'])) {        
 
             if ($password === $row['password']) //using plaintext for demonstration only!            
-              login($row['customerID'], $username);
+              login($row['customerID'],$username);
         } echo "<h2>Login fail</h2>".PHP_EOL;   
     } else { 
       echo "<h2>$msg</h2>".PHP_EOL;
-    }      
+    }   
 }
 ?>
 <h1>Login</h1>

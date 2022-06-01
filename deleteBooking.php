@@ -17,7 +17,7 @@ checkUser();
 loginStatus(); 
 
 include "config.php"; //load in any variables
-$DBC = mysqli_connect("localhost", DBUSER, DBPASSWORD, DBDATABASE);
+$DBC = mysqli_connect(DBHOST, DBUSER, DBPASSWORD, DBDATABASE);
  
 //insert DB code from here onwards
 //check if the connection was good
@@ -54,24 +54,6 @@ if (isset($_POST['submit']) and !empty($_POST['submit']) and ($_POST['submit'] =
     }
 
     if ($error == 0 and $bookingId > 0) {
-        //delete the orderlines associated with the booking
-        $query = "DELETE orderlines
-                  FROM orderlines
-                  INNER JOIN orders ON orderlines.orderID = orders.orderID
-                  WHERE orders.bookingID=?";
-        $stmt = mysqli_prepare($DBC,$query); //prepare the query
-        mysqli_stmt_bind_param($stmt,'i',$bookingId); 
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-
-        //delete the orders associated with the booking
-        $query = "DELETE FROM orders
-                  WHERE orders.bookingID=?";
-        $stmt = mysqli_prepare($DBC,$query); //prepare the query
-        mysqli_stmt_bind_param($stmt,'i',$bookingId); 
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-
         //now delete the booking
         $query = "DELETE FROM booking WHERE booking.bookingID=?";
         $stmt = mysqli_prepare($DBC,$query); //prepare the query
